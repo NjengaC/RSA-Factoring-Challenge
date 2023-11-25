@@ -1,40 +1,42 @@
 #!/usr/bin/env bash
 
-
-organize() {
+# Function to calculate the product of factors
+calculate_product() {
 	if [ $# -ne 3 ]; then
-		local array=("$@")
-		local product=1
-		local count=0
-		for a in "${array[@]}"; do
-			if [ $count -gt 1 ]; then
-				product=$(echo "$product * $a" | bc)
+		local input_args=("$@")
+		local iteration_count=0
+		local product_result=1
+
+		for arg in "${input_args[@]}"; do
+			if [ $iteration_count -gt 1 ]; then
+				product_result=$(echo "$arg * $product_result" | bc)
 			fi
-			count=$((count + 1))
+			iteration_count=$((iteration_count + 1))
 		done
 	else
-		product="$3"
+		local product_result="$3"
 	fi
+
 	local first_num="$2"
-	local num=$(echo "$1" | tr ':' '=')
-	local comparison=$(echo "if ($product > $first_num) 1 else 0" | bc)
-	if ((comparison == 1)); then
-		local swap="$first_num"
-		first_num="$product"
-		product="$swap"
+	local second_num=$(echo "$1" | tr ':' '=')
+
+	local comparison_result=$(echo "if ($product_result > $first_num) 1 else 0" | bc)
+
+	if ((comparison_result == 1)); then
+		local temp_num="$first_num"
+		first_num="$product_result"
+		product_result="$temp_num"
 	fi
-	echo "$num$first_num*$product"
+
+	echo "$second_num$first_num*$product_result"
 }
 
-
-
 if [ $# -ne 1 ]; then
-	echo 'usage: RSA <file>'
+	echo 'Usage: rsa <file>'
 	exit 1
-
 else
 	while read file_line; do
-		factors=$(factor "$file_line")
-		organize $factors
+		result=$(factor "$file_line")
+		calculate_product $result
 	done < "$1"
 fi
