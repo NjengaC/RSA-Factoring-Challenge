@@ -3,7 +3,7 @@
 
 organize() {
 	if [ $# -ne 3 ]; then
-		local array=("$@")
+		local array="$@"
 		local product=1
 		local count=0
 		for a in "${array[@]}"; do
